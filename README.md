@@ -3,11 +3,9 @@
 
 This repository contains multiple Arduino programs demonstrating the use of various sensor modules for environmental data collection and hardware control. These programs include functionalities like CO2 monitoring, temperature and humidity measurement, gas sensor operations, and LED displays.
 
-## File Descriptions
+# File Descriptions
 
-1. v1.ino
-
-Functionality:
+# 1. v1.ino
 
 Uses the SCD30 sensor to measure CO2 concentration, temperature, and humidity.
 
@@ -17,23 +15,23 @@ Modules Used:
 
 Sensirion SCD30 I2C sensor.
 
-2. v2.ino
+# 2. v2.ino
 
 Functionality:
 
-Collects CO2, temperature, and humidity data using the SCD30 sensor.
+Collects CO2, temperature, and humidity data using the SCD30 sensor. 
 
 Displays data in real-time on an LCD and LED matrix module.
 
 Modules Used:
 
-Sensirion SCD30 I2C sensor.
+1. Sensirion SCD30 I2C sensor.
 
-20x4 I2C LCD display.
+2. 20x4 I2C LCD display.
 
-MD_MAX72XX LED matrix display module.
+3. MD_MAX72XX LED matrix display module.
 
-3. v3.ino
+# 3. v3.ino
 
 Functionality:
 
