@@ -1,0 +1,155 @@
+#include <Wire.h>
+#include <SensirionI2cScd30.h>
+#include <Adafruit_SGP40.h>
+#include <MiCS6814-I2C.h>
+#include <LiquidCrystal_I2C.h>
+#include <MD_Parola.h>
+#include <MD_MAX72xx.h>
+
+// SCD30 初始化
+SensirionI2cScd30 scd30;
+// SGP40 初始化
+Adafruit_SGP40 sgp;
+// MiCS6814 初始化
+MiCS6814 mics;
+
+// LCD 初始化 (地址 0x27, 16 列 2 行)
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// MAX7219 点阵 LED 设置
+#define HARDWARE_TYPE MD_MAX72XX::FC16_HW
+#define MAX_DEVICES 4
+#define DATA_PIN 6
+#define CLK_PIN 7
+#define CS_PIN 5
+
+MD_Parola matrix = MD_Parola(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
+
+void setup() {
+  // 初始化串口
+  Serial.begin(115200);
+  Wire.begin();
+
+  // 初始化 LCD
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Initializing...");
+
+  // 初始化点阵 LED
+  matrix.begin();
+  matrix.setIntensity(5);  // 设置亮度
+  matrix.displayClear();
+
+  // 初始化 SCD30
+  scd30.begin(Wire, SCD30_I2C_ADDR_61);
+  scd30.startPeriodicMeasurement(0);
+
+  // 初始化 SGP40
+  if (!sgp.begin()) {
+    Serial.println("Failed to initialize SGP40!");
+    lcd.setCursor(0, 1);
+    lcd.print("SGP40 Error!");
+    while (1);
+  }
+
+  // 初始化 MiCS6814
+  if (!mics.begin(0x19)) {
+    Serial.println("Failed to initialize MiCS6814!");
+    lcd.setCursor(0, 1);
+    lcd.print("MiCS6814 Error!");
+    while (1);
+  }
+  mics.powerOn();
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Sensors Ready!");
+  delay(2000);
+}
+
+void displayOnLed(const char* message) {
+  matrix.displayText(message, PA_CENTER, 100, 2000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
+  while (!matrix.displayAnimate()) {
+    // 等待滚动动画完成
+  }
+}
+
+void loop() {
+  lcd.clear();
+  
+  // SCD30 数据读取
+  float co2 = 0.0, temp = 0.0, hum = 0.0;
+  if (scd30.blockingReadMeasurementData(co2, temp, hum) == NO_ERROR) {
+    Serial.print("CO2: ");
+    Serial.print(co2);
+    Serial.print(" ppm, Temp: ");
+    Serial.print(temp);
+    Serial.print(" C, Hum: ");
+    Serial.println(hum);
+
+    lcd.setCursor(0, 0);
+    lcd.print("CO2:");
+    lcd.print((int)co2);
+    lcd.print("ppm");
+
+    lcd.setCursor(0, 1);
+    lcd.print("T:");
+    lcd.print((int)temp);
+    lcd.print("C H:");
+    lcd.print((int)hum);
+    lcd.print("%");
+
+    char message[64];
+    snprintf(message, sizeof(message), "CO2: %dppm Temp: %dC Hum: %d%%", (int)co2, (int)temp, (int)hum);
+    displayOnLed(message);
+  } else {
+    Serial.println("Failed to read SCD30!");
+    lcd.setCursor(0, 0);
+    lcd.print("SCD30 Error!");
+    displayOnLed("SCD30 Error!");
+  }
+
+  delay(2000);
+
+  // SGP40 数据读取
+  int32_t vocIndex = sgp.measureVocIndex(temp, hum);
+  Serial.print("VOC Index: ");
+  Serial.println(vocIndex);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("VOC Index:");
+  lcd.print(vocIndex);
+
+  char vocMessage[32];
+  snprintf(vocMessage, sizeof(vocMessage), "VOC Index: %d", vocIndex);
+  displayOnLed(vocMessage);
+
+  delay(2000);
+
+  // MiCS6814 数据读取
+  float co = mics.measureCO();
+  float no2 = mics.measureNO2();
+  Serial.print("CO: ");
+  Serial.print(co);
+  Serial.print(" ppm, NO2: ");
+  Serial.println(no2);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("CO:");
+  lcd.print(co);
+  lcd.print("ppm");
+
+  lcd.setCursor(0, 1);
+  lcd.print("NO2:");
+  lcd.print(no2);
+  lcd.print("ppm");
+
+  char gasMessage[64];
+  snprintf(gasMessage, sizeof(gasMessage), "CO: %.2fppm NO2: %.2fppm", co, no2);
+  displayOnLed(gasMessage);
+
+  delay(2000);
+}

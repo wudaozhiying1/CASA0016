@@ -1,0 +1,65 @@
+#include <Wire.h>
+#include <SensirionI2cScd30.h>
+#include <LiquidCrystal_I2C.h>
+
+// 初始化 SCD30
+SensirionI2cScd30 scd30;
+
+// 初始化 LCD (地址 0x27, 16 列 2 行)
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  // 初始化串口
+  Serial.begin(115200);
+  Wire.begin();
+
+  // 初始化 LCD
+  lcd.init();          // 初始化 LCD
+  lcd.backlight();     // 打开背光
+  lcd.setCursor(0, 0); // 光标设置到第一行第一列
+  lcd.print("Initializing...");
+
+  // 初始化 SCD30
+  scd30.begin(Wire, SCD30_I2C_ADDR_61); // 默认地址 0x61
+  scd30.startPeriodicMeasurement(0);
+
+  lcd.clear();         // 清屏
+  lcd.setCursor(0, 0); // 光标设置到第一行第一列
+  lcd.print("SCD30 Ready!"); 
+  delay(2000);         // 显示 2 秒
+}
+
+void loop() {
+  lcd.clear();         // 清屏
+  
+  // 从 SCD30 读取数据
+  float co2 = 0.0, temp = 0.0, hum = 0.0;
+  if (scd30.blockingReadMeasurementData(co2, temp, hum) == NO_ERROR) {
+    // 将数据显示到 LCD
+    lcd.setCursor(0, 0);
+    lcd.print("CO2:");
+    lcd.print((int)co2); // 显示 CO₂ 浓度
+    lcd.print("ppm");
+
+    lcd.setCursor(0, 1);
+    lcd.print("T:");
+    lcd.print((int)temp); // 显示温度
+    lcd.print("C H:");
+    lcd.print((int)hum);  // 显示湿度
+    lcd.print("%");
+
+    // 在串口打印数据（可选）
+    Serial.print("CO2: ");
+    Serial.print(co2);
+    Serial.print(" ppm, Temp: ");
+    Serial.print(temp);
+    Serial.print(" C, Humidity: ");
+    Serial.println(hum);
+  } else {
+    lcd.setCursor(0, 0);
+    lcd.print("SCD30 Read Err!");
+    Serial.println("Error reading SCD30 data!");
+  }
+
+  delay(2000); // 每 2 秒更新一次
+}
