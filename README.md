@@ -175,11 +175,11 @@ Install the following libraries via Arduino Library Manager:
 
 3. SensirionI2cScd30
 
-LiquidCrystal_I2C
+4. LiquidCrystal_I2C
 
-MD_MAX72XX
+5. MD_MAX72XX
 
-MD_Parola
+6.MD_Parola
 
 # Instructions
 
