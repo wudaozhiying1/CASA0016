@@ -57,7 +57,7 @@ Adafruit SGP40 VOC sensor.
 
 Sensirion SCD30 CO2 sensor.
 
-5. v5.ino
+# 5. v5.ino
 
 Functionality:
 
@@ -71,7 +71,7 @@ Adafruit SGP40 VOC sensor.
 
 Sensirion SCD30 CO2 sensor.
 
-6. LED.ino
+# 6. LED.ino
 
 Functionality:
 
@@ -81,7 +81,7 @@ Modules Used:
 
 MD_MAX72XX LED matrix module.
 
-7. SCD30.ino
+# 7. SCD30.ino
 
 Functionality:
 
@@ -93,7 +93,7 @@ Modules Used:
 
 Sensirion SCD30 CO2 sensor.
 
-8. test.txt
+# 8. test.txt
 
 Functionality:
 
@@ -113,7 +113,7 @@ LiquidCrystal_I2C LCD.
 
 MD_MAX72XX LED matrix.
 
-9. lcd co2.txt
+# 9. lcd co2.txt
 
 Functionality:
 
@@ -125,7 +125,7 @@ Sensirion SCD30 CO2 sensor.
 
 LiquidCrystal_I2C LCD.
 
-10. v6.ino
+# 10. v6.ino
 
 Functionality:
 
@@ -135,15 +135,15 @@ Provides additional visualization and error handling features.
 
 Modules Used:
 
-Sensirion SCD30 CO2 sensor.
+1. Sensirion SCD30 CO2 sensor.
 
-Adafruit SGP40 VOC sensor.
+2. Adafruit SGP40 VOC sensor.
 
-MiCS6814 gas sensor.
+3. MiCS6814 gas sensor.
 
-LiquidCrystal_I2C LCD.
+4.LiquidCrystal_I2C LCD.
 
-MD_MAX72XX LED matrix.
+5.MD_MAX72XX LED matrix.
 
 Hardware Requirements
 
@@ -151,29 +151,29 @@ Arduino-compatible development board (e.g., Arduino Uno, Mega, Nano).
 
 Supported sensor modules:
 
-SCD30 (CO2, temperature, humidity)
+1. SCD30 (CO2, temperature, humidity)
 
-SGP40 (VOC)
+2. SGP40 (VOC)
 
-MiCS-6814 (multiple gases)
+3. MiCS-6814 (multiple gases)
 
 Display modules:
 
-20x4 I2C LCD.
+1. 20x4 I2C LCD.
 
-MD_MAX72XX LED matrix module.
+2. MD_MAX72XX LED matrix module.
 
 Software Requirements
 
-Arduino IDE.
+1. Arduino IDE.
 
 Install the following libraries via Arduino Library Manager:
 
-Wire
+1. Wire
 
-Adafruit_SGP40
+2. Adafruit_SGP40
 
-SensirionI2cScd30
+3. SensirionI2cScd30
 
 LiquidCrystal_I2C
 
@@ -181,11 +181,8 @@ MD_MAX72XX
 
 MD_Parola
 
-Instructions
+# Instructions
 
-Clone this repository:
-
-git clone https://github.com/your-repo-name.git
 
 Open the Arduino IDE and load the desired .ino file.
 
@@ -197,18 +194,10 @@ Compile and upload the code to the development board.
 
 Use the Serial Monitor or observe the LCD/LED outputs to view the results.
 
-Notes
+# Notes
 
 Ensure the voltage of sensors and display modules is compatible with the Arduino board (typically 3.3V or 5V).
 
 Use the Serial Monitor during debugging to view detailed error messages.
 
-Contribution
 
-Contributions are welcome! Feel free to:
-
-Raise issues.
-
-Suggest improvements.
-
-Submit Pull Requests.
