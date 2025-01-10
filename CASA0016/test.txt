@@ -6,17 +6,17 @@
 #include <MD_Parola.h>
 #include <MD_MAX72xx.h>
 
-// SCD30 初始化
+
 SensirionI2cScd30 scd30;
-// SGP40 初始化
+
 Adafruit_SGP40 sgp;
-// MiCS6814 初始化
+
 MiCS6814 mics;
 
-// LCD 初始化 (地址 0x27, 16 列 2 行)
+
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-// MAX7219 点阵 LED 设置
+
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
 #define MAX_DEVICES 4
 #define DATA_PIN 6
@@ -26,26 +26,26 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 MD_Parola matrix = MD_Parola(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
 
 void setup() {
-  // 初始化串口
+
   Serial.begin(115200);
   Wire.begin();
 
-  // 初始化 LCD
+
   lcd.init();
   lcd.backlight();
   lcd.setCursor(0, 0);
   lcd.print("Initializing...");
 
-  // 初始化点阵 LED
+
   matrix.begin();
-  matrix.setIntensity(5);  // 设置亮度
+  matrix.setIntensity(5);  
   matrix.displayClear();
 
-  // 初始化 SCD30
+
   scd30.begin(Wire, SCD30_I2C_ADDR_61);
   scd30.startPeriodicMeasurement(0);
 
-  // 初始化 SGP40
+
   if (!sgp.begin()) {
     Serial.println("Failed to initialize SGP40!");
     lcd.setCursor(0, 1);
@@ -53,7 +53,7 @@ void setup() {
     while (1);
   }
 
-  // 初始化 MiCS6814
+
   if (!mics.begin(0x19)) {
     Serial.println("Failed to initialize MiCS6814!");
     lcd.setCursor(0, 1);
@@ -71,14 +71,14 @@ void setup() {
 void displayOnLed(const char* message) {
   matrix.displayText(message, PA_CENTER, 100, 2000, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
   while (!matrix.displayAnimate()) {
-    // 等待滚动动画完成
+
   }
 }
 
 void loop() {
   lcd.clear();
   
-  // SCD30 数据读取
+
   float co2 = 0.0, temp = 0.0, hum = 0.0;
   if (scd30.blockingReadMeasurementData(co2, temp, hum) == NO_ERROR) {
     Serial.print("CO2: ");
@@ -112,7 +112,7 @@ void loop() {
 
   delay(2000);
 
-  // SGP40 数据读取
+
   int32_t vocIndex = sgp.measureVocIndex(temp, hum);
   Serial.print("VOC Index: ");
   Serial.println(vocIndex);
@@ -128,7 +128,7 @@ void loop() {
 
   delay(2000);
 
-  // MiCS6814 数据读取
+
   float co = mics.measureCO();
   float no2 = mics.measureNO2();
   Serial.print("CO: ");
